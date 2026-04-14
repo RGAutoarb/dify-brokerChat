@@ -1,0 +1,19 @@
+global:
+  pass_rate: 0.80
+  route_accuracy: 0.90
+  citation_coverage: 0.85
+  compliance_rate: 1.00
+
+per_category:
+  account: 0.80
+  deposits: 0.80
+  trading: 0.80
+  portfolio: 0.75
+  risk: 0.75
+  offtopic: 0.90
+
+judge:
+  correctness: 0.70
+  groundedness: 0.75
+  completeness: 0.65
+  tone: 0.80

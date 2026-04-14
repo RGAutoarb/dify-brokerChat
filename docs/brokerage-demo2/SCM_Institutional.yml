@@ -1,0 +1,650 @@
+app:
+  description: 'Institutional-grade customer support chatbot for Sahel Capital Markets
+    (SCM). Routes customer queries through MECE classification, validates knowledge
+    retrieval quality, and provides grounded answers with escalation to named team
+    members. Includes off-topic filtering and graceful fallback handling.'
+  icon: "\U0001F916"
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: advanced-chat
+  name: SCM Customer Support
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openrouter:0.0.43@241af6052a82fa08c0d7c3756d7f2a57cc16d8b3c05d7fd58088ece28cae9e34
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: "Welcome to Sahel Capital Markets support. I can help you with:\n\
+      \n1. Account & Verification \u2014 opening accounts, KYC, login issues\n2. Deposits,\
+      \ Withdrawals & Fees \u2014 funding, withdrawing, charges\n3. Buying or Selling\
+      \ Investments \u2014 equities, bonds, placing orders\n4. My Portfolio, Dividends\
+      \ & Coupons \u2014 holdings, payments, performance\n5. Risk & Safety \u2014 investment\
+      \ protection, diversification, currency risk\n\nHow can I help you today?"
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: true
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - How do I open an account?
+    - What shares can I buy?
+    - What are your fees?
+    - Is my money safe?
+    suggested_questions_after_answer:
+      enabled: true
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: question-classifier
+      id: 1776083422503-source-1776083543041-target
+      source: '1776083422503'
+      sourceHandle: source
+      target: '1776083543041'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1776083543041-1-1776083642797-target
+      source: '1776083543041'
+      sourceHandle: '1'
+      target: '1776083642797'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1776083543041-2-1776083642797-target
+      source: '1776083543041'
+      sourceHandle: '2'
+      target: '1776083642797'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1776083543041-1776083598053-1776083642797-target
+      source: '1776083543041'
+      sourceHandle: '1776083598053'
+      target: '1776083642797'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1776083543041-1776083612651-1776083642797-target
+      source: '1776083543041'
+      sourceHandle: '1776083612651'
+      target: '1776083642797'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: 1776083543041-1776083618288-1776083642797-target
+      source: '1776083543041'
+      sourceHandle: '1776083618288'
+      target: '1776083642797'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: answer
+      id: 1776083543041-1776090000001-1776090000010-target
+      source: '1776083543041'
+      sourceHandle: '1776090000001'
+      target: '1776090000010'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: code
+      id: 1776083642797-source-1776090000020-target
+      source: '1776083642797'
+      sourceHandle: source
+      target: '1776090000020'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1776090000020-source-1776090000030-target
+      source: '1776090000020'
+      sourceHandle: source
+      target: '1776090000030'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1776090000030-true-1776090000040-target
+      source: '1776090000030'
+      sourceHandle: 'true'
+      target: '1776090000040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1776090000030-false-1776090000050-target
+      source: '1776090000030'
+      sourceHandle: 'false'
+      target: '1776090000050'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1776090000040-source-1776090000060-target
+      source: '1776090000040'
+      sourceHandle: source
+      target: '1776090000060'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1776090000050-source-1776090000070-target
+      source: '1776090000050'
+      sourceHandle: source
+      target: '1776090000070'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: User Input
+        type: start
+        variables: []
+      height: 73
+      id: '1776083422503'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        classes:
+        - id: '1'
+          name: 'Account & Verification: Questions about opening an SCM account, KYC
+            verification, identity documents, Ghana Card, login problems, password
+            reset, joint accounts, corporate accounts, demo accounts, personal information
+            updates, multi-currency wallets, account types.'
+        - id: '2'
+          name: 'Deposits, Withdrawals & Fees: Questions about depositing money, withdrawing
+            money, mobile money (MTN MoMo, Vodafone Cash, AirtelTigo), bank transfers,
+            wire transfers, fees, commissions, charges, settlement periods, available
+            balance, currency conversion fees, cheque deposits, payment methods, how
+            many times you can withdraw.'
+        - id: '1776083598053'
+          name: 'Buying or Selling Investments: Questions about buying or selling
+            shares, equities, stocks, bonds, placing orders, market orders, limit
+            orders, stop-loss orders, subscription windows, trading hours, specific
+            companies (Sonatel, Zenith, Ecobank, Consolidated Bank Ghana), tickers,
+            GSE, NSE, BRVM, bond menu, coupon rates, maturity dates.'
+        - id: '1776083612651'
+          name: 'Portfolio, Dividends & Coupons: Questions about existing holdings,
+            portfolio value, dividend payments, coupon payments, ex-dividend dates,
+            bond maturity, investment performance, unreceived dividends, missing coupon
+            payments, portfolio drops.'
+        - id: '1776083618288'
+          name: 'Risk & Safety: Questions about investment risk, safety of funds,
+            diversification, currency risk, liquidity risk, whether money is protected,
+            CSD custody, segregated accounts, what happens if SCM closes, whether
+            bonds are safe, market drops, delisting, losing money.'
+        - id: '1776090000001'
+          name: 'Off-Topic or Not Related to SCM: Questions unrelated to Sahel Capital
+            Markets, investing, accounts, trading, or financial services. Includes
+            weather, sports, politics, entertainment, general trivia, personal questions
+            to the chatbot, jokes, greetings without a question, or any topic outside
+            SCM brokerage services.'
+        instruction: 'You are classifying customer support queries for Sahel Capital
+          Markets (SCM), a West African brokerage that offers equities and bonds only.
+          No forex, no crypto, no CFDs, no options. Classify based on the user''s
+          primary intent. If the query could fit multiple categories, choose the most
+          actionable one. Only classify as Off-Topic if the query is clearly unrelated
+          to SCM''s financial services — when in doubt, classify into the closest
+          SCM category.'
+        instructions: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        query_variable_selector:
+        - '1776083422503'
+        - sys.query
+        selected: false
+        title: Question Classifier
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 320
+      id: '1776083543041'
+      position:
+        x: 420
+        y: 150
+      positionAbsolute:
+        x: 420
+        y: 150
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - wpiX2IGTHuNIgBsNQH+FQDH7Eg+y3+n04wvbypJdQxp9DfhtoUOy49poWV7bGtnr
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          top_k: 5
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: openai/text-embedding-3-large
+              embedding_provider_name: langgenius/openrouter/openrouter
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1776083422503'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 90
+      id: '1776083642797'
+      position:
+        x: 780
+        y: 250
+      positionAbsolute:
+        x: 780
+        y: 250
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "def main(context: list) -> dict:\n    if not context or len(context)\
+          \ == 0:\n        return {\"has_context\": False, \"context_text\": \"\"}\n\
+          \n    parts = []\n    for item in context:\n        if isinstance(item, dict):\n\
+          \            text = (\n                item.get(\"content\", \"\")\n     \
+          \           or item.get(\"text\", \"\")\n                or item.get(\"\
+          page_content\", \"\")\n                or str(item)\n            )\n    \
+          \        parts.append(text)\n        elif isinstance(item, str):\n      \
+          \      parts.append(item)\n        else:\n            parts.append(str(item))\n\
+          \n    combined = \"\\n\\n\".join(parts)\n\n    if len(combined.strip())\
+          \ > 50:\n        return {\"has_context\": True, \"context_text\": combined.strip()}\n\
+          \n    return {\"has_context\": False, \"context_text\": \"\"}"
+        code_language: python3
+        outputs:
+          context_text:
+            children: null
+            type: string
+          has_context:
+            children: null
+            type: boolean
+        selected: false
+        title: Context Validator
+        type: code
+        variables:
+        - value_selector:
+          - '1776083642797'
+          - result
+          value_type: array[object]
+          variable: context
+      height: 52
+      id: '1776090000020'
+      position:
+        x: 1120
+        y: 250
+      positionAbsolute:
+        x: 1120
+        y: 250
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+            value: 'true'
+            varType: boolean
+            variable_selector:
+            - '1776090000020'
+            - has_context
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: Has Context?
+        type: if-else
+      height: 126
+      id: '1776090000030'
+      position:
+        x: 1460
+        y: 230
+      positionAbsolute:
+        x: 1460
+        y: 230
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1776083642797'
+          - result
+        isInIteration: false
+        isInLoop: false
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 10
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: system-prompt-primary
+          role: system
+          text: "You are a customer support assistant for Sahel Capital Markets (SCM),\
+            \ a licensed West African brokerage headquartered in Accra, Ghana with\
+            \ offices in Lagos and Abidjan. SCM offers 20 selected equities across\
+            \ the Ghana Stock Exchange (GSE), Nigerian Stock Exchange (NSE), and Bourse\
+            \ Regionale (BRVM), plus a curated menu of sovereign and corporate bonds.\n\
+            \nRULES \u2014 follow these strictly:\n\n1. Answer ONLY based on the context\
+            \ provided below. This context comes from SCM\u2019s verified knowledge\
+            \ base and is the source of truth. Do not use any outside knowledge. If\
+            \ the context contains the answer, provide it directly and specifically\
+            \ \u2014 cite exact figures, fees, names, and processes from the context.\n\
+            \n2. If the context does not contain enough information to answer the question,\
+            \ say \"I don't have specific information on that. Let me connect you with\
+            \ our team\" and suggest the appropriate contact from the team list below.\n\
+            \n3. Never provide personal investment advice such as \"you should buy\
+            \ X\" or \"I recommend Y.\" If asked, respond: \"SCM cannot provide personal\
+            \ investment advice. For market analysis and sector insights, I recommend\
+            \ reading the weekly West Africa Market Pulse report from Dr. Nana Adjei,\
+            \ our Head of Research.\"\n\n4. Never predict prices, returns, or market\
+            \ movements.\n\n5. When the context mentions escalating to a specific team\
+            \ member, always include their full name and role. Then list what information\
+            \ the user should prepare before the handoff.\n\n6. Use GHS as the default\
+            \ currency and GMT as the default timezone unless the user\u2019s question\
+            \ is specifically about an NSE instrument (use NGN/WAT) or BRVM instrument\
+            \ (use XOF/GMT).\n\n7. Keep answers concise, direct, and professional.\
+            \ Do not repeat the user\u2019s question back to them. Do not add disclaimers\
+            \ unless the context specifically includes one.\n\n8. If the user asks\
+            \ about a product or service that SCM does not offer (forex, CFDs, options,\
+            \ cryptocurrency, margin trading, leverage), respond clearly: \"SCM does\
+            \ not offer [product]. SCM specialises in West African equities and bonds.\"\
+            \n\n9. When citing specific fees, minimums, settlement periods, or trading\
+            \ hours, state the exact figure from the context. Do not approximate or\
+            \ round.\n\nTEAM CONTACTS \u2014 use these when escalation is needed:\n\
+            - Abena Owusu, KYC Officer: verification failures, document issues, name\
+            \ changes\n- Ama Mensah, Head of Client Relations (Accra): general account\
+            \ issues, login problems\n- Chidi Okonkwo, Client Relations Manager (Lagos):\
+            \ Nigerian market client issues\n- Marie Kouassi, Client Relations Associate\
+            \ (Abidjan): BRVM queries, Francophone support\n- Yaw Boateng, Head Trader:\
+            \ equity execution disputes, order fill issues, price feed errors\n- Fatima\
+            \ Diallo, Bond Desk Manager: bond subscriptions, coupon payments, bond\
+            \ availability\n- Dr. Nana Adjei, Head of Research: market analysis, research\
+            \ reports, product information\n- Tunde Bakare, Equity Research Analyst:\
+            \ banking and telecoms sector analysis\n- Emeka Nwosu, Head of Compliance:\
+            \ regulatory matters, large withdrawals, custodial safety\n- Kofi Mensah,\
+            \ Operations Manager: deposits, withdrawals, settlement, fee disputes\n\
+            \nContext:\n{{#context#}}"
+        - id: user-prompt-primary
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: Primary LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776090000040'
+      position:
+        x: 1820
+        y: 150
+      positionAbsolute:
+        x: 1820
+        y: 150
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        isInIteration: false
+        isInLoop: false
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 10
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: system-prompt-fallback
+          role: system
+          text: "You are a customer support assistant for Sahel Capital Markets (SCM).\
+            \ The knowledge base did not return relevant information for the user\u2019\
+            s query. You must NOT guess or fabricate any information about SCM\u2019\
+            s products, fees, processes, or policies.\n\nRULES:\n1. Acknowledge that\
+            \ you cannot answer this specific question from the available information.\n\
+            2. Based on the topic of the user\u2019s query, suggest the most relevant\
+            \ team contact from the list below.\n3. Ask if the user would like help\
+            \ with something else.\n4. Keep the response brief and professional.\n\n\
+            TEAM CONTACTS:\n- Account issues, login, onboarding: Ama Mensah, Head\
+            \ of Client Relations (Accra) or Chidi Okonkwo, Client Relations Manager\
+            \ (Lagos)\n- KYC and verification: Abena Owusu, KYC Officer\n- Deposits,\
+            \ withdrawals, settlement, fees: Kofi Mensah, Operations Manager\n- Trading,\
+            \ order execution, price issues: Yaw Boateng, Head Trader\n- Bonds, coupons,\
+            \ subscriptions: Fatima Diallo, Bond Desk Manager\n- Compliance, regulatory,\
+            \ large transactions: Emeka Nwosu, Head of Compliance\n- Research, market\
+            \ analysis, product info: Dr. Nana Adjei, Head of Research\n- BRVM and\
+            \ Francophone queries: Marie Kouassi, Client Relations Associate (Abidjan)\n\
+            - Banking and telecoms sector analysis: Tunde Bakare, Equity Research Analyst\n\
+            \nRespond in this format:\n\"I don\u2019t have enough information in our\
+            \ knowledge base to answer that specifically. For [topic], I\u2019d recommend\
+            \ reaching out to [Full Name], [Role], who can assist you directly.\n\n\
+            Is there anything else I can help you with?\""
+        - id: user-prompt-fallback
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: Fallback LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776090000050'
+      position:
+        x: 1820
+        y: 400
+      positionAbsolute:
+        x: 1820
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: "Thank you for reaching out. I\u2019m specifically designed to help\
+          \ with Sahel Capital Markets (SCM) services, including:\n\n\u2022 Account\
+          \ opening and verification\n\u2022 Deposits, withdrawals, and fees\n\u2022\
+          \ Buying or selling equities and bonds\n\u2022 Portfolio, dividends, and\
+          \ coupon payments\n\u2022 Investment risk and safety\n\nYour question doesn\u2019\
+          t appear to be related to SCM\u2019s services. Could you rephrase your question,\
+          \ or is there something specific about your SCM account I can help with?"
+        selected: false
+        title: Off-Topic Response
+        type: answer
+        variables: []
+      height: 103
+      id: '1776090000010'
+      position:
+        x: 780
+        y: 520
+      positionAbsolute:
+        x: 780
+        y: 520
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1776090000040.text#}}'
+        selected: false
+        title: Answer
+        type: answer
+        variables: []
+      height: 103
+      id: '1776090000060'
+      position:
+        x: 2180
+        y: 150
+      positionAbsolute:
+        x: 2180
+        y: 150
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1776090000050.text#}}'
+        selected: false
+        title: Fallback Answer
+        type: answer
+        variables: []
+      height: 103
+      id: '1776090000070'
+      position:
+        x: 2180
+        y: 400
+      positionAbsolute:
+        x: 2180
+        y: 400
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 0
+      y: 150
+      zoom: 0.45
+  rag_pipeline_variables: []

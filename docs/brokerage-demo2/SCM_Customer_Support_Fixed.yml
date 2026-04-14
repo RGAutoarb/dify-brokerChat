@@ -1,0 +1,329 @@
+app:
+  description: 'Customer support chatbot for Sahel Capital Markets (SCM). Answers questions about accounts, deposits, withdrawals, fees, equities, bonds, and investment risk using a curated knowledge base.'
+  icon: "\U0001F916"
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: advanced-chat
+  name: SCM Customer Support
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openrouter:0.0.43@241af6052a82fa08c0d7c3756d7f2a57cc16d8b3c05d7fd58088ece28cae9e34
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: "Welcome to Sahel Capital Markets support. I can help you with:\n\n1. Account & Verification \u2014 opening accounts, KYC, login issues\n2. Deposits, Withdrawals & Fees \u2014 funding, withdrawing, charges\n3. Buying or Selling Investments \u2014 equities, bonds, placing orders\n4. My Portfolio, Dividends & Coupons \u2014 holdings, payments, performance\n5. Risk & Safety \u2014 investment protection, diversification, currency risk\n\nHow can I help you today?"
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - How do I open an account?
+    - What shares can I buy?
+    - What are your fees?
+    - Is my money safe?
+    suggested_questions_after_answer:
+      enabled: true
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: question-classifier
+      id: start-source-qc-target
+      source: 'start_node'
+      sourceHandle: source
+      target: 'qc_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-class1-kr-target
+      source: 'qc_node'
+      sourceHandle: 'class_account'
+      target: 'kr_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-class2-kr-target
+      source: 'qc_node'
+      sourceHandle: 'class_deposits'
+      target: 'kr_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-class3-kr-target
+      source: 'qc_node'
+      sourceHandle: 'class_trading'
+      target: 'kr_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-class4-kr-target
+      source: 'qc_node'
+      sourceHandle: 'class_portfolio'
+      target: 'kr_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-class5-kr-target
+      source: 'qc_node'
+      sourceHandle: 'class_risk'
+      target: 'kr_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: kr-source-llm-target
+      source: 'kr_node'
+      sourceHandle: source
+      target: 'llm_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: llm-source-answer-target
+      source: 'llm_node'
+      sourceHandle: source
+      target: 'answer_node'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: User Input
+        type: start
+        variables: []
+      height: 73
+      id: 'start_node'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        classes:
+        - id: 'class_account'
+          name: 'Account & Verification: Questions about opening an SCM account, KYC verification, identity documents, Ghana Card, login problems, password reset, joint accounts, corporate accounts, demo accounts, personal information updates, multi-currency wallets, account types.'
+        - id: 'class_deposits'
+          name: 'Deposits, Withdrawals & Fees: Questions about depositing money, withdrawing money, mobile money (MTN MoMo, Vodafone Cash, AirtelTigo), bank transfers, wire transfers, fees, commissions, charges, settlement periods, available balance, currency conversion fees, cheque deposits, payment methods.'
+        - id: 'class_trading'
+          name: 'Buying or Selling Investments: Questions about buying or selling shares, equities, stocks, bonds, placing orders, market orders, limit orders, stop-loss orders, subscription windows, trading hours, specific companies (Sonatel, Zenith, Ecobank, Consolidated Bank Ghana), tickers, GSE, NSE, BRVM, bond menu, coupon rates, maturity dates.'
+        - id: 'class_portfolio'
+          name: 'Portfolio, Dividends & Coupons: Questions about existing holdings, portfolio value, dividend payments, coupon payments, ex-dividend dates, bond maturity, investment performance, unreceived dividends, missing coupon payments, portfolio drops.'
+        - id: 'class_risk'
+          name: 'Risk & Safety: Questions about investment risk, safety of funds, diversification, currency risk, liquidity risk, whether money is protected, CSD custody, segregated accounts, what happens if SCM closes, whether bonds are safe, market drops, delisting, losing money.'
+        instruction: 'You are classifying customer support queries for Sahel Capital Markets (SCM), a West African brokerage that offers equities and bonds only. No forex, no crypto, no CFDs, no options. Classify based on the user''s primary intent. If the query could fit multiple categories, choose the most actionable one.'
+        instructions: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        query_variable_selector:
+        - 'start_node'
+        - sys.query
+        selected: false
+        title: Question Classifier
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 284
+      id: 'qc_node'
+      position:
+        x: 420
+        y: 182
+      positionAbsolute:
+        x: 420
+        y: 182
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - KD83LJXhv5/nuwa51B7bIP+mJyd78aMyqCwEBW2l5UVvEU+2PUbYRJP6yMZTaH4L
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          top_k: 5
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: openai/text-embedding-3-large
+              embedding_provider_name: langgenius/openrouter/openrouter
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - 'start_node'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 90
+      id: 'kr_node'
+      position:
+        x: 780
+        y: 276
+      positionAbsolute:
+        x: 780
+        y: 276
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - 'kr_node'
+          - result
+        isInIteration: false
+        isInLoop: false
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 10
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: system-prompt-001
+          role: system
+          text: "You are a customer support assistant for Sahel Capital Markets (SCM), a licensed West African brokerage headquartered in Accra, Ghana with offices in Lagos and Abidjan. SCM offers 20 selected equities across the Ghana Stock Exchange (GSE), Nigerian Stock Exchange (NSE), and Bourse Regionale (BRVM), plus a curated menu of sovereign and corporate bonds.\n\nRULES:\n1. Answer based on the context provided. This is from SCM\u2019s knowledge base and is the source of truth. Use it to answer the user\u2019s question directly and specifically.\n2. If the context does not contain enough information to answer the question, say \"I don't have specific information on that. Let me connect you with our team\" and suggest the appropriate contact from the team list below.\n3. Never provide personal investment advice such as \"you should buy X\" or \"I recommend Y.\" If asked, respond: \"SCM cannot provide personal investment advice. For market analysis and sector insights, I recommend reading the weekly West Africa Market Pulse report from Dr. Nana Adjei, our Head of Research.\"\n4. Never predict prices, returns, or market movements.\n5. When the context mentions escalating to a specific team member, always include their full name and role. Then list what information the user should prepare before the handoff.\n6. Use GHS as the default currency and GMT as the default timezone unless the question is specifically about an NSE instrument (use NGN/WAT) or BRVM instrument (use XOF/GMT).\n7. Keep answers concise, direct, and professional. Do not repeat the user\u2019s question back to them.\n8. If the user asks about a product or service that SCM does not offer (forex, CFDs, options, cryptocurrency, margin trading, leverage), respond clearly: \"SCM does not offer [product]. SCM specialises in West African equities and bonds.\"\n\nTEAM CONTACTS \u2014 use when escalation is needed:\n- Abena Owusu, KYC Officer: verification failures, document issues, name changes\n- Ama Mensah, Head of Client Relations (Accra): general account issues, login problems\n- Chidi Okonkwo, Client Relations Manager (Lagos): Nigerian market client issues\n- Marie Kouassi, Client Relations Associate (Abidjan): BRVM queries, Francophone support\n- Yaw Boateng, Head Trader: equity execution disputes, order fill issues, price feed errors\n- Fatima Diallo, Bond Desk Manager: bond subscriptions, coupon payments, bond availability\n- Dr. Nana Adjei, Head of Research: market analysis, research reports, product information\n- Tunde Bakare, Equity Research Analyst: banking and telecoms sector analysis\n- Emeka Nwosu, Head of Compliance: regulatory matters, large withdrawals, custodial safety\n- Kofi Mensah, Operations Manager: deposits, withdrawals, settlement, fee disputes\n\nContext:\n{{#context#}}"
+        - id: user-prompt-001
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: 'llm_node'
+      position:
+        x: 1140
+        y: 260
+      positionAbsolute:
+        x: 1140
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#llm_node.text#}}'
+        selected: false
+        title: Answer
+        type: answer
+        variables: []
+      height: 103
+      id: 'answer_node'
+      position:
+        x: 1500
+        y: 260
+      positionAbsolute:
+        x: 1500
+        y: 260
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 0
+      y: 200
+      zoom: 0.6
+  rag_pipeline_variables: []

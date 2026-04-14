@@ -54,6 +54,9 @@ coverage.json
 *.py,cover
 .hypothesis/
 .pytest_cache/
+scripts/stress-test/eval/eval_tests.md
+scripts/stress-test/results
+
 
 # Translations
 *.mo
