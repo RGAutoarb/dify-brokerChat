@@ -3,6 +3,7 @@ global:
   route_accuracy: 0.90
   citation_coverage: 0.85
   compliance_rate: 1.00
+  language_lock_rate: 1.00
 
 per_category:
   account: 0.80
@@ -11,6 +12,12 @@ per_category:
   portfolio: 0.75
   risk: 0.75
   offtopic: 0.90
+
+per_language:
+  en:
+    pass_rate: 0.80
+  fr:
+    pass_rate: 0.75
 
 judge:
   correctness: 0.70

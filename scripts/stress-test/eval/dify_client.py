@@ -19,6 +19,7 @@ class EvalResponse:
     nodes_fired: list[str] = field(default_factory=list)
     citations: list[dict[str, Any]] = field(default_factory=list)
     timing: dict[str, float] = field(default_factory=dict)
+    conversation_id: str = ""
     error: str | None = None
 
 
@@ -28,6 +29,7 @@ def send_query(
     base_url: str,
     api_key: str,
     user: str = "eval-harness",
+    conversation_id: str = "",
     connect_timeout: float = 10.0,
     read_timeout: float = 60.0,
 ) -> EvalResponse:
@@ -38,11 +40,13 @@ def send_query(
         base_url: Dify service API base (e.g. http://localhost/v1).
         api_key: App-level API key (app-xxx).
         user: Arbitrary user identifier for the conversation.
+        conversation_id: Existing Dify conversation id to continue. Empty string starts a fresh conversation;
+            the server-assigned id is surfaced on the returned EvalResponse so callers can thread turns.
         connect_timeout: TCP connect timeout in seconds.
         read_timeout: Timeout for reading the full stream.
 
     Returns:
-        EvalResponse with parsed answer, events, citations, and timing.
+        EvalResponse with parsed answer, events, citations, conversation_id, and timing.
     """
     url = f"{base_url.rstrip('/')}/chat-messages"
     headers = {
@@ -55,7 +59,7 @@ def send_query(
         "inputs": {},
         "query": query,
         "response_mode": "streaming",
-        "conversation_id": "",
+        "conversation_id": conversation_id,
         "user": user,
     }
 
@@ -64,16 +68,24 @@ def send_query(
     t_start = time.monotonic()
 
     try:
-        with httpx.Client(timeout=httpx.Timeout(read_timeout, connect=connect_timeout)) as client:
+        with httpx.Client(
+            timeout=httpx.Timeout(read_timeout, connect=connect_timeout)
+        ) as client:
             with client.stream("POST", url, headers=headers, json=payload) as resp:
                 if resp.status_code != 200:
-                    result.error = f"HTTP {resp.status_code}: {resp.read().decode()[:500]}"
+                    result.error = (
+                        f"HTTP {resp.status_code}: {resp.read().decode()[:500]}"
+                    )
                     return result
 
                 data_buffer: list[str] = []
 
                 for raw_line in resp.iter_lines():
-                    line = raw_line.strip() if isinstance(raw_line, str) else raw_line.decode().strip()
+                    line = (
+                        raw_line.strip()
+                        if isinstance(raw_line, str)
+                        else raw_line.decode().strip()
+                    )
 
                     if not line:
                         if data_buffer:
@@ -124,6 +136,13 @@ def _process_data(
 
     event_type = event.get("event", "")
     result.events_trace.append({"event": event_type, "data": event})
+
+    if not result.conversation_id:
+        cid = event.get("conversation_id") or event.get("data", {}).get(
+            "conversation_id", ""
+        )
+        if cid:
+            result.conversation_id = cid
 
     if event_type == "node_started":
         node_id = event.get("data", {}).get("node_id", "")

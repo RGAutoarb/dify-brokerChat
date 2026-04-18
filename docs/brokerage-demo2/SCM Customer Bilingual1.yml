@@ -1,0 +1,1810 @@
+app:
+  description: Bilingual customer support chatbot for Sahel Capital Markets (SCM).
+    Uses a first-turn language selection, locks the conversation language, and routes
+    users through separate English and French support branches with dedicated knowledge
+    bases.
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: advanced-chat
+  name: SCM Customer Bilingual1
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openrouter:0.0.43@241af6052a82fa08c0d7c3756d7f2a57cc16d8b3c05d7fd58088ece28cae9e34
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables:
+  - description: Selected language for the active conversation.
+    id: e0c58fa6-68c2-48dd-90b6-f0b20d7d1f11
+    name: lang
+    selector:
+    - conversation
+    - lang
+    value: fr
+    value_type: string
+  - description: Whether the conversation language has been locked.
+    id: 0e4fa6c8-a9b8-4f44-bbc3-6eab3f9100f2
+    name: lang_locked
+    selector:
+    - conversation
+    - lang_locked
+    value: 'no'
+    value_type: string
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 20
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: 'Veuillez sélectionner votre langue pour commencer / Please
+      select your language to begin.
+
+
+      - Français
+
+      - English
+
+
+      Le français est la langue par défaut. Une fois la langue choisie, elle reste
+      fixe pour cette conversation.
+
+
+      French is the default. Once chosen, the language stays fixed for this conversation.'
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      config:
+        inputs_config:
+          enabled: true
+          preset_response: Please keep your message professional and focused on SCM
+            support.
+        keywords: scam fraud terrorist financing
+        outputs_config:
+          enabled: false
+          preset_response: ''
+      enabled: true
+      type: keywords
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - Français
+    - English
+    suggested_questions_after_answer:
+      enabled: true
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: code
+      id: start-source-lang-bootstrap-target
+      source: start_node
+      sourceHandle: source
+      target: lang_bootstrap_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: lang-bootstrap-source-state-assigner-target
+      source: lang_bootstrap_node
+      sourceHandle: source
+      target: lang_state_assigner_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: assigner
+        targetType: if-else
+      id: state-assigner-source-blocked-switch-if-target
+      source: lang_state_assigner_node
+      sourceHandle: source
+      target: blocked_switch_if_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: blocked-switch-if-true-lock-notice-target
+      source: blocked_switch_if_node
+      sourceHandle: 'true'
+      target: lock_notice_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: blocked-switch-if-false-choose-english-if-target
+      source: blocked_switch_if_node
+      sourceHandle: 'false'
+      target: choose_english_if_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: choose-english-if-true-english-greeting-target
+      source: choose_english_if_node
+      sourceHandle: 'true'
+      target: english_greeting_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: choose-english-if-false-choose-french-if-target
+      source: choose_english_if_node
+      sourceHandle: 'false'
+      target: choose_french_if_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: choose-french-if-true-french-greeting-target
+      source: choose_french_if_node
+      sourceHandle: 'true'
+      target: french_greeting_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: if-else
+      id: choose-french-if-false-route-english-if-target
+      source: choose_french_if_node
+      sourceHandle: 'false'
+      target: route_english_if_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: question-classifier
+      id: route-english-if-true-qc-en-target
+      source: route_english_if_node
+      sourceHandle: 'true'
+      target: qc_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: question-classifier
+      id: route-english-if-false-qc-fr-target
+      source: route_english_if_node
+      sourceHandle: 'false'
+      target: qc_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-en-class-account-kr-target
+      source: qc_en_node
+      sourceHandle: class_account
+      target: kr_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-en-class-deposits-kr-target
+      source: qc_en_node
+      sourceHandle: class_deposits
+      target: kr_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-en-class-trading-kr-target
+      source: qc_en_node
+      sourceHandle: class_trading
+      target: kr_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-en-class-portfolio-kr-target
+      source: qc_en_node
+      sourceHandle: class_portfolio
+      target: kr_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-en-class-risk-kr-target
+      source: qc_en_node
+      sourceHandle: class_risk
+      target: kr_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: answer
+      id: qc-en-class-offtopic-answer-target
+      source: qc_en_node
+      sourceHandle: class_offtopic
+      target: offtopic_answer_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: code
+      id: kr-en-source-context-validator-target
+      source: kr_en_node
+      sourceHandle: source
+      target: context_validator_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: context-validator-en-source-has-context-if-target
+      source: context_validator_en_node
+      sourceHandle: source
+      target: has_context_en_if_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: has-context-en-if-true-primary-llm-target
+      source: has_context_en_if_node
+      sourceHandle: 'true'
+      target: primary_llm_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: has-context-en-if-false-fallback-llm-target
+      source: has_context_en_if_node
+      sourceHandle: 'false'
+      target: fallback_llm_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: primary-llm-en-source-answer-target
+      source: primary_llm_en_node
+      sourceHandle: source
+      target: answer_primary_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: fallback-llm-en-source-answer-target
+      source: fallback_llm_en_node
+      sourceHandle: source
+      target: answer_fallback_en_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-fr-class-account-kr-target
+      source: qc_fr_node
+      sourceHandle: class_account
+      target: kr_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-fr-class-deposits-kr-target
+      source: qc_fr_node
+      sourceHandle: class_deposits
+      target: kr_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-fr-class-trading-kr-target
+      source: qc_fr_node
+      sourceHandle: class_trading
+      target: kr_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-fr-class-portfolio-kr-target
+      source: qc_fr_node
+      sourceHandle: class_portfolio
+      target: kr_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: knowledge-retrieval
+      id: qc-fr-class-risk-kr-target
+      source: qc_fr_node
+      sourceHandle: class_risk
+      target: kr_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: question-classifier
+        targetType: answer
+      id: qc-fr-class-offtopic-answer-target
+      source: qc_fr_node
+      sourceHandle: class_offtopic
+      target: offtopic_answer_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: code
+      id: kr-fr-source-context-validator-target
+      source: kr_fr_node
+      sourceHandle: source
+      target: context_validator_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: context-validator-fr-source-has-context-if-target
+      source: context_validator_fr_node
+      sourceHandle: source
+      target: has_context_fr_if_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: has-context-fr-if-true-primary-llm-target
+      source: has_context_fr_if_node
+      sourceHandle: 'true'
+      target: primary_llm_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: has-context-fr-if-false-fallback-llm-target
+      source: has_context_fr_if_node
+      sourceHandle: 'false'
+      target: fallback_llm_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: primary-llm-fr-source-answer-target
+      source: primary_llm_fr_node
+      sourceHandle: source
+      target: answer_primary_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: fallback-llm-fr-source-answer-target
+      source: fallback_llm_fr_node
+      sourceHandle: source
+      target: answer_fallback_fr_node
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: User Input
+        type: start
+        variables: []
+      height: 73
+      id: start_node
+      position:
+        x: 80
+        y: 420
+      positionAbsolute:
+        x: 80
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "def main(query: str, current_lang: str, current_locked: str) -> dict:\n\
+          \    query_lower = (query or \"\").strip().lower()\n    lang = current_lang\
+          \ if current_lang in {\"fr\", \"en\"} else \"fr\"\n    locked = \"yes\"\
+          \ if current_locked == \"yes\" else \"no\"\n\n    english_choices = {\n\
+          \        \"english\",\n        \"english please\",\n        \"speak english\"\
+          ,\n        \"i want english\",\n        \"anglais\",\n    }\n    french_choices\
+          \ = {\n        \"français\",\n        \"francais\",\n        \"français\
+          \ s'il vous plaît\",\n        \"francais s'il vous plaît\",\n        \"\
+          french\",\n        \"je veux le français\",\n    }\n\n    result = {\n\
+          \        \"next_lang\": lang,\n        \"next_locked\": locked,\n      \
+          \  \"blocked_switch\": False,\n        \"choose_english\": False,\n   \
+          \     \"choose_french\": False,\n        \"route_english\": lang == \"\
+          en\",\n        \"lock_message\": \"\",\n    }\n\n    if locked == \"yes\"\
+          :\n        if query_lower in english_choices or query_lower in french_choices:\n\
+          \            result[\"blocked_switch\"] = True\n            if lang ==\
+          \ \"en\":\n                result[\"lock_message\"] = \"This chat is locked\
+          \ to English. Please start a new conversation if you would like French.\"\
+          \n            else:\n                result[\"lock_message\"] = \"Cette\
+          \ conversation est verrouillée en français. Veuillez démarrer une nouvelle\
+          \ conversation si vous souhaitez l'anglais.\"\n        return result\n\n\
+          \    if query_lower in english_choices:\n        result[\"next_lang\"]\
+          \ = \"en\"\n        result[\"next_locked\"] = \"yes\"\n        result[\"\
+          choose_english\"] = True\n        result[\"route_english\"] = False\n \
+          \       return result\n\n    if query_lower in french_choices:\n      \
+          \  result[\"next_lang\"] = \"fr\"\n        result[\"next_locked\"] = \"\
+          yes\"\n        result[\"choose_french\"] = True\n        result[\"route_english\"\
+          ] = False\n        return result\n\n    result[\"next_lang\"] = \"fr\"\n\
+          \    result[\"next_locked\"] = \"yes\"\n    result[\"route_english\"] =\
+          \ False\n    return result"
+        code_language: python3
+        outputs:
+          blocked_switch:
+            children: null
+            type: boolean
+          choose_english:
+            children: null
+            type: boolean
+          choose_french:
+            children: null
+            type: boolean
+          lock_message:
+            children: null
+            type: string
+          next_lang:
+            children: null
+            type: string
+          next_locked:
+            children: null
+            type: string
+          route_english:
+            children: null
+            type: boolean
+        selected: false
+        title: Language Bootstrap
+        type: code
+        variables:
+        - value_selector:
+          - start_node
+          - sys.query
+          value_type: string
+          variable: query
+        - value_selector:
+          - conversation
+          - lang
+          value_type: string
+          variable: current_lang
+        - value_selector:
+          - conversation
+          - lang_locked
+          value_type: string
+          variable: current_locked
+      height: 52
+      id: lang_bootstrap_node
+      position:
+        x: 380
+        y: 420
+      positionAbsolute:
+        x: 380
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        desc: ''
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - lang_bootstrap_node
+          - next_lang
+          variable_selector:
+          - conversation
+          - lang
+          write_mode: over-write
+        - input_type: variable
+          operation: over-write
+          value:
+          - lang_bootstrap_node
+          - next_locked
+          variable_selector:
+          - conversation
+          - lang_locked
+          write_mode: over-write
+        selected: false
+        title: Language State Assigner
+        type: assigner
+        version: '2'
+      height: 108
+      id: lang_state_assigner_node
+      position:
+        x: 700
+        y: 420
+      positionAbsolute:
+        x: 700
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: blocked-switch-condition
+            value: 'true'
+            varType: boolean
+            variable_selector:
+            - lang_bootstrap_node
+            - blocked_switch
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: Blocked Language Switch?
+        type: if-else
+      height: 148
+      id: blocked_switch_if_node
+      position:
+        x: 1020
+        y: 420
+      positionAbsolute:
+        x: 1020
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#lang_bootstrap_node.lock_message#}}'
+        selected: false
+        title: Lock Notice
+        type: answer
+        variables: []
+      height: 103
+      id: lock_notice_node
+      position:
+        x: 1320
+        y: 160
+      positionAbsolute:
+        x: 1320
+        y: 160
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: choose-english-condition
+            value: 'true'
+            varType: boolean
+            variable_selector:
+            - lang_bootstrap_node
+            - choose_english
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: English Selected?
+        type: if-else
+      height: 148
+      id: choose_english_if_node
+      position:
+        x: 1320
+        y: 420
+      positionAbsolute:
+        x: 1320
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 'Language set to English. Ask me anything about your SCM account,
+          deposits, withdrawals, trading, portfolio, or investment risk.'
+        selected: false
+        title: English Greeting
+        type: answer
+        variables: []
+      height: 123
+      id: english_greeting_node
+      position:
+        x: 1640
+        y: 160
+      positionAbsolute:
+        x: 1640
+        y: 160
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: choose-french-condition
+            value: 'true'
+            varType: boolean
+            variable_selector:
+            - lang_bootstrap_node
+            - choose_french
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: French Selected?
+        type: if-else
+      height: 148
+      id: choose_french_if_node
+      position:
+        x: 1640
+        y: 420
+      positionAbsolute:
+        x: 1640
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 'Langue réglée sur le français. Posez-moi vos questions sur votre
+          compte SCM, les dépôts, les retraits, le trading, le portefeuille ou le
+          risque d''investissement.'
+        selected: false
+        title: French Greeting
+        type: answer
+        variables: []
+      height: 123
+      id: french_greeting_node
+      position:
+        x: 1960
+        y: 160
+      positionAbsolute:
+        x: 1960
+        y: 160
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: route-english-condition
+            value: 'true'
+            varType: boolean
+            variable_selector:
+            - lang_bootstrap_node
+            - route_english
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: Route To English?
+        type: if-else
+      height: 148
+      id: route_english_if_node
+      position:
+        x: 1960
+        y: 420
+      positionAbsolute:
+        x: 1960
+        y: 420
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        classes:
+        - id: class_account
+          name: 'Account & Verification: Questions about opening an SCM account, KYC
+            verification, identity documents, Ghana Card, login problems, password
+            reset, joint accounts, corporate accounts, multi-currency wallets, account
+            types, onboarding, and client verification.'
+        - id: class_deposits
+          name: 'Deposits, Withdrawals & Fees: Questions about depositing money, withdrawing
+            money, mobile money, bank transfers, wire transfers, fees, commissions,
+            charges, settlement periods, available balance, currency conversion, and
+            payment methods.'
+        - id: class_trading
+          name: 'Buying or Selling Investments: Questions about buying or selling
+            shares, equities, stocks, bonds, placing orders, market orders, limit
+            orders, trading hours, specific companies, tickers, and GSE, NSE, or
+            BRVM instruments.'
+        - id: class_portfolio
+          name: 'Portfolio, Dividends & Coupons: Questions about holdings, portfolio
+            value, dividend payments, coupon payments, ex-dividend dates, bond maturity,
+            investment performance, and unreceived payments.'
+        - id: class_risk
+          name: 'Risk & Safety: Questions about investment risk, safety of funds,
+            diversification, currency risk, liquidity risk, CSD custody, segregated
+            accounts, and what happens if SCM closes.'
+        - id: class_offtopic
+          name: 'Off-Topic: Anything unrelated to SCM financial services, such as
+            weather, sports, entertainment, politics, trivia, jokes, or personal
+            chit-chat that is not about SCM accounts, investing, trading, portfolio,
+            fees, or risk.'
+        instruction: You are classifying customer support queries for Sahel Capital
+          Markets (SCM), a West African brokerage that offers curated equities and
+          bonds only. No forex, no CFDs, no options, no margin products, and no crypto.
+          Classify based on the user's primary intent. The six classes are mutually
+          exclusive and collectively exhaustive. Only choose Off-Topic when the query
+          is clearly unrelated to SCM's financial services; if a question could fit
+          an SCM category, prefer the closest in-scope SCM class.
+        instructions: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        query_variable_selector:
+        - start_node
+        - sys.query
+        selected: false
+        title: English Question Classifier
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 322
+      id: qc_en_node
+      position:
+        x: 2300
+        y: 120
+      positionAbsolute:
+        x: 2300
+        y: 120
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - wpiX2IGTHuNIgBsNQH+FQDH7Eg+y3+n04wvbypJdQxp9DfhtoUOy49poWV7bGtnr
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          top_k: 5
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: openai/text-embedding-3-large
+              embedding_provider_name: langgenius/openrouter/openrouter
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - start_node
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: English Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 90
+      id: kr_en_node
+      position:
+        x: 2660
+        y: 120
+      positionAbsolute:
+        x: 2660
+        y: 120
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "def main(context: list) -> dict:\n    if not context or len(context)\
+          \ == 0:\n        return {\"has_context\": False, \"context_text\": \"\"\
+          }\n\n    parts = []\n    for item in context:\n        if isinstance(item,\
+          \ dict):\n            text = (\n                item.get(\"content\", \"\
+          \")\n                or item.get(\"text\", \"\")\n                or item.get(\"\
+          page_content\", \"\")\n                or str(item)\n            )\n   \
+          \         parts.append(text)\n        elif isinstance(item, str):\n    \
+          \        parts.append(item)\n        else:\n            parts.append(str(item))\n\
+          \n    combined = \"\\n\\n\".join(part for part in parts if part).strip()\n\
+          \n    if len(combined) > 50:\n        return {\"has_context\": True, \"\
+          context_text\": combined}\n\n    return {\"has_context\": False, \"context_text\"\
+          : \"\"}"
+        code_language: python3
+        outputs:
+          context_text:
+            children: null
+            type: string
+          has_context:
+            children: null
+            type: boolean
+        selected: false
+        title: English Context Validator
+        type: code
+        variables:
+        - value_selector:
+          - kr_en_node
+          - result
+          value_type: array[object]
+          variable: context
+      height: 52
+      id: context_validator_en_node
+      position:
+        x: 2980
+        y: 120
+      positionAbsolute:
+        x: 2980
+        y: 120
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: has-context-en-condition
+            value: 'true'
+            varType: boolean
+            variable_selector:
+            - context_validator_en_node
+            - has_context
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: English Has Context?
+        type: if-else
+      height: 148
+      id: has_context_en_if_node
+      position:
+        x: 3300
+        y: 120
+      positionAbsolute:
+        x: 3300
+        y: 120
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - kr_en_node
+          - result
+        isInIteration: false
+        isInLoop: false
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 10
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: system-prompt-primary-en
+          role: system
+          text: 'You are a customer support assistant for Sahel Capital Markets (SCM),
+            a West African brokerage serving clients across Accra, Lagos, and Abidjan.
+            SCM offers only a selected list of West African equities across the GSE,
+            NSE, and BRVM exchanges, plus curated sovereign and corporate bonds.
+
+
+            RULES - follow these strictly:
+
+
+            1. Answer ONLY from the context provided below. The context comes from
+            SCM''s verified knowledge base and is the source of truth. Do not use
+            outside knowledge.
+
+
+            2. If the context contains the answer, answer directly and specifically.
+            Cite exact figures, fees, names, timeframes, settlement periods, trading
+            hours, and process steps exactly as they appear in context. Do not approximate,
+            round, or invent.
+
+
+            3. If the context does not contain enough information, say: "I don''t
+            have specific information on that. Let me connect you with our team."
+            Then name the best contact from the team list below.
+
+
+            4. Never provide personal investment advice. Never tell the user what
+            they should buy, sell, or hold.
+
+
+            5. Never predict prices, returns, market direction, or investment outcomes.
+
+
+            6. If the user asks about products SCM does not offer, respond clearly
+            that SCM does not offer that product and that SCM specialises in West
+            African equities and bonds only. This includes forex, CFDs, options, crypto,
+            margin trading, and leverage.
+
+
+            7. When escalation is appropriate, include the full contact name and role,
+            and briefly state what issue they handle.
+
+
+            8. Keep the answer concise, direct, and professional. Do not restate the
+            user''s question.
+
+
+            TEAM CONTACTS:
+
+            - Abena Owusu, KYC Officer: verification failures, document issues, account
+            verification updates
+
+            - Ama Mensah, Head of Client Relations (Accra): general account issues,
+            onboarding, login problems
+
+            - Chidi Okonkwo, Client Relations Manager (Lagos): Nigerian market client
+            issues, local client support
+
+            - Marie Kouassi, Client Relations Associate (Abidjan): BRVM queries, Francophone
+            support
+
+            - Yaw Boateng, Head Trader: equity execution disputes, order fill issues,
+            ticker or market execution problems
+
+            - Fatima Diallo, Bond Desk Manager: bond subscriptions, bond availability,
+            coupon payment queries
+
+            - Dr. Nana Adjei, Head of Research: market research, issuer information,
+            product education
+
+            - Tunde Bakare, Equity Research Analyst: sector-level equity research
+            questions
+
+            - Emeka Nwosu, Head of Compliance: regulatory matters, account restrictions,
+            compliance escalations
+
+            - Kofi Mensah, Operations Manager: deposits, withdrawals, settlement,
+            fee disputes
+
+
+            Context:
+
+            {{#context#}}'
+        - id: user-prompt-primary-en
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: English Primary LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: primary_llm_en_node
+      position:
+        x: 3640
+        y: 40
+      positionAbsolute:
+        x: 3640
+        y: 40
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        isInIteration: false
+        isInLoop: false
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 10
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: system-prompt-fallback-en
+          role: system
+          text: 'You are a customer support assistant for Sahel Capital Markets (SCM).
+            The knowledge base did not return enough reliable information for this
+            question. You must not guess, infer unsupported facts, or fabricate any
+            SCM policy, fee, product term, trading rule, or operational process.
+
+
+            RULES:
+
+            1. State briefly that you do not have enough information in the knowledge
+            base to answer specifically.
+
+            2. Suggest the most relevant team contact based on the user''s topic.
+
+            3. Do not provide advice, predictions, or unverified details.
+
+            4. Keep the answer brief and professional.
+
+            5. End by asking if the user would like help with something else.
+
+
+            TEAM CONTACTS:
+
+            - Abena Owusu, KYC Officer: KYC, verification, document issues
+
+            - Ama Mensah, Head of Client Relations (Accra): onboarding, account setup,
+            login, general account support
+
+            - Chidi Okonkwo, Client Relations Manager (Lagos): Nigerian market client
+            support
+
+            - Marie Kouassi, Client Relations Associate (Abidjan): BRVM and Francophone
+            support
+
+            - Yaw Boateng, Head Trader: trade execution, order status, market order
+            issues
+
+            - Fatima Diallo, Bond Desk Manager: bonds, subscriptions, coupons
+
+            - Dr. Nana Adjei, Head of Research: market information and product education
+
+            - Tunde Bakare, Equity Research Analyst: sector research support
+
+            - Emeka Nwosu, Head of Compliance: compliance and regulatory matters
+
+            - Kofi Mensah, Operations Manager: deposits, withdrawals, settlement,
+            fees
+
+
+            Respond in this format:
+
+            "I don''t have enough information in our knowledge base to answer that
+            specifically. For [topic], I''d recommend reaching out to [Full Name],
+            [Role], who can assist you directly.
+
+
+            Is there anything else I can help you with?"'
+        - id: user-prompt-fallback-en
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: English Fallback LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: fallback_llm_en_node
+      position:
+        x: 3640
+        y: 200
+      positionAbsolute:
+        x: 3640
+        y: 200
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 'Thank you for reaching out. I''m specifically designed to help with
+          Sahel Capital Markets (SCM) services, including:
+
+
+          • Account & Verification
+
+          • Deposits, Withdrawals & Fees
+
+          • Buying or Selling Investments
+
+          • Portfolio, Dividends & Coupons
+
+          • Risk & Safety
+
+
+          Your question doesn''t appear to be related to SCM''s services. Please ask
+          me something about your SCM account, funding, trading, portfolio, or investment
+          risk if you''d like help.'
+        selected: false
+        title: English Off-Topic Response
+        type: answer
+        variables: []
+      height: 276
+      id: offtopic_answer_en_node
+      position:
+        x: 2660
+        y: 470
+      positionAbsolute:
+        x: 2660
+        y: 470
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#primary_llm_en_node.text#}}'
+        selected: false
+        title: English Answer
+        type: answer
+        variables: []
+      height: 103
+      id: answer_primary_en_node
+      position:
+        x: 3960
+        y: 40
+      positionAbsolute:
+        x: 3960
+        y: 40
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#fallback_llm_en_node.text#}}'
+        selected: false
+        title: English Fallback Answer
+        type: answer
+        variables: []
+      height: 103
+      id: answer_fallback_en_node
+      position:
+        x: 3960
+        y: 200
+      positionAbsolute:
+        x: 3960
+        y: 200
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        classes:
+        - id: class_account
+          name: 'Compte & Vérification : Questions sur l''ouverture d''un compte SCM,
+            la vérification KYC, les documents d''identité, la Ghana Card, les problèmes
+            de connexion, la réinitialisation de mot de passe, les comptes joints,
+            les comptes d''entreprise, les portefeuilles multidevises, les types
+            de comptes, l''intégration et la vérification client.'
+        - id: class_deposits
+          name: 'Dépôts, Retraits & Frais : Questions sur les dépôts d''argent, les
+            retraits, le mobile money, les virements bancaires, les virements internationaux,
+            les frais, les commissions, les charges, les périodes de règlement, le
+            solde disponible, la conversion de devises et les modes de paiement.'
+        - id: class_trading
+          name: 'Achat ou Vente d''Investissements : Questions sur l''achat ou la
+            vente d''actions, de titres, d''obligations, la passation d''ordres,
+            les ordres au marché, les ordres limités, les heures de trading, les
+            sociétés spécifiques, les tickers et les instruments du GSE, du NSE ou
+            de la BRVM.'
+        - id: class_portfolio
+          name: 'Portefeuille, Dividendes & Coupons : Questions sur les avoirs, la
+            valeur du portefeuille, les paiements de dividendes, les paiements de
+            coupons, les dates de détachement, l''échéance des obligations, la performance
+            des investissements et les paiements non reçus.'
+        - id: class_risk
+          name: 'Risque & Sécurité : Questions sur le risque d''investissement, la
+            sécurité des fonds, la diversification, le risque de change, le risque
+            de liquidité, la garde au dépositaire central, les comptes ségrégués
+            et ce qui se passe si SCM ferme.'
+        - id: class_offtopic
+          name: 'Hors sujet : Tout ce qui n''est pas lié aux services financiers
+            de SCM, comme la météo, le sport, le divertissement, la politique, les
+            anecdotes, les blagues ou les échanges personnels qui ne concernent pas
+            les comptes SCM, l''investissement, le trading, le portefeuille, les
+            frais ou le risque.'
+        instruction: Vous classez les demandes de support client pour Sahel Capital
+          Markets (SCM), une maison de courtage ouest-africaine qui propose uniquement
+          des actions et obligations sélectionnées. Pas de forex, pas de CFD, pas
+          d''options, pas de produits sur marge et pas de crypto. Classez selon l''intention
+          principale de l''utilisateur. Les six classes sont mutuellement exclusives
+          et couvrent tous les cas. N''utilisez la classe Hors sujet que si la demande
+          est clairement sans rapport avec les services financiers de SCM ; si une
+          question peut entrer dans une catégorie SCM, choisissez la catégorie SCM
+          la plus proche.
+        instructions: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        query_variable_selector:
+        - start_node
+        - sys.query
+        selected: false
+        title: French Question Classifier
+        type: question-classifier
+        vision:
+          enabled: false
+      height: 322
+      id: qc_fr_node
+      position:
+        x: 2300
+        y: 720
+      positionAbsolute:
+        x: 2300
+        y: 720
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - DEMO3_FR_DATASET_ID_HERE
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          top_k: 5
+          weights:
+            keyword_setting:
+              keyword_weight: 0.3
+            vector_setting:
+              embedding_model_name: openai/text-embedding-3-large
+              embedding_provider_name: langgenius/openrouter/openrouter
+              vector_weight: 0.7
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - start_node
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: French Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 90
+      id: kr_fr_node
+      position:
+        x: 2660
+        y: 720
+      positionAbsolute:
+        x: 2660
+        y: 720
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "def main(context: list) -> dict:\n    if not context or len(context)\
+          \ == 0:\n        return {\"has_context\": False, \"context_text\": \"\"\
+          }\n\n    parts = []\n    for item in context:\n        if isinstance(item,\
+          \ dict):\n            text = (\n                item.get(\"content\", \"\
+          \")\n                or item.get(\"text\", \"\")\n                or item.get(\"\
+          page_content\", \"\")\n                or str(item)\n            )\n   \
+          \         parts.append(text)\n        elif isinstance(item, str):\n    \
+          \        parts.append(item)\n        else:\n            parts.append(str(item))\n\
+          \n    combined = \"\\n\\n\".join(part for part in parts if part).strip()\n\
+          \n    if len(combined) > 50:\n        return {\"has_context\": True, \"\
+          context_text\": combined}\n\n    return {\"has_context\": False, \"context_text\"\
+          : \"\"}"
+        code_language: python3
+        outputs:
+          context_text:
+            children: null
+            type: string
+          has_context:
+            children: null
+            type: boolean
+        selected: false
+        title: French Context Validator
+        type: code
+        variables:
+        - value_selector:
+          - kr_fr_node
+          - result
+          value_type: array[object]
+          variable: context
+      height: 52
+      id: context_validator_fr_node
+      position:
+        x: 2980
+        y: 720
+      positionAbsolute:
+        x: 2980
+        y: 720
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: has-context-fr-condition
+            value: 'true'
+            varType: boolean
+            variable_selector:
+            - context_validator_fr_node
+            - has_context
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: French Has Context?
+        type: if-else
+      height: 148
+      id: has_context_fr_if_node
+      position:
+        x: 3300
+        y: 720
+      positionAbsolute:
+        x: 3300
+        y: 720
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - kr_fr_node
+          - result
+        isInIteration: false
+        isInLoop: false
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 10
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: system-prompt-primary-fr
+          role: system
+          text: 'Vous êtes un assistant de support client pour Sahel Capital Markets
+            (SCM), une maison de courtage ouest-africaine au service de clients à
+            Accra, Lagos et Abidjan. SCM propose uniquement une liste sélectionnée
+            d''actions ouest-africaines sur les marchés GSE, NSE et BRVM, ainsi que
+            des obligations souveraines et d''entreprise choisies.
+
+
+            RÈGLES - suivez-les strictement :
+
+
+            1. Répondez UNIQUEMENT à partir du contexte fourni ci-dessous. Le contexte
+            provient de la base de connaissances vérifiée de SCM et constitue la
+            source de vérité. N''utilisez aucune connaissance externe.
+
+
+            2. Si le contexte contient la réponse, répondez directement et précisément.
+            Citez exactement les chiffres, frais, noms, délais, périodes de règlement,
+            horaires de négociation et étapes de processus tels qu''ils apparaissent
+            dans le contexte. N''approximez pas, n''arrondissez pas et n''inventez
+            rien.
+
+
+            3. Si le contexte ne contient pas assez d''information, dites : "Je n''ai
+            pas d''information précise à ce sujet. Je vais vous orienter vers notre
+            équipe." Ensuite, indiquez le meilleur contact de l''équipe ci-dessous.
+
+
+            4. Ne fournissez jamais de conseil d''investissement personnalisé. Ne
+            dites jamais à l''utilisateur quoi acheter, vendre ou conserver.
+
+
+            5. Ne prédisez jamais les prix, les rendements, la direction du marché
+            ou les résultats d''investissement.
+
+
+            6. Si l''utilisateur pose une question sur des produits que SCM ne propose
+            pas, répondez clairement que SCM ne propose pas ce produit et que SCM
+            est spécialisée uniquement dans les actions et obligations ouest-africaines.
+            Cela inclut le forex, les CFD, les options, la crypto, le trading sur
+            marge et l''effet de levier.
+
+
+            7. Lorsqu''une escalade est appropriée, incluez le nom complet du contact
+            et son rôle, puis indiquez brièvement le sujet qu''il traite.
+
+
+            8. Gardez la réponse concise, directe et professionnelle. Ne reformulez
+            pas la question de l''utilisateur.
+
+
+            CONTACTS DE L''ÉQUIPE :
+
+            - Abena Owusu, Officière KYC : échecs de vérification, problèmes de documents,
+            mises à jour de vérification de compte
+
+            - Ama Mensah, Responsable des Relations Clients (Accra) : problèmes de
+            compte généraux, intégration, problèmes de connexion
+
+            - Chidi Okonkwo, Responsable des Relations Clients (Lagos) : problèmes
+            clients du marché nigérian, support client local
+
+            - Marie Kouassi, Chargée des Relations Clients (Abidjan) : questions
+            BRVM, support francophone
+
+            - Yaw Boateng, Responsable Trading : litiges d''exécution actions, problèmes
+            de traitement d''ordres, problèmes d''exécution de marché ou de ticker
+
+            - Fatima Diallo, Responsable Obligations : souscriptions d''obligations,
+            disponibilité des obligations, questions sur les paiements de coupons
+
+            - Dr. Nana Adjei, Responsable Recherche : recherche de marché, informations
+            sur les émetteurs, éducation sur les produits
+
+            - Tunde Bakare, Analyste Recherche Actions : questions de recherche sectorielle
+            sur les actions
+
+            - Emeka Nwosu, Responsable Conformité : questions réglementaires, restrictions
+            de compte, escalades de conformité
+
+            - Kofi Mensah, Responsable des Opérations : dépôts, retraits, règlement,
+            litiges sur les frais
+
+
+            Contexte :
+
+            {{#context#}}'
+        - id: user-prompt-primary-fr
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: French Primary LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: primary_llm_fr_node
+      position:
+        x: 3640
+        y: 640
+      positionAbsolute:
+        x: 3640
+        y: 640
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        isInIteration: false
+        isInLoop: false
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: true
+            size: 10
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: openai/gpt-5-mini
+          provider: langgenius/openrouter/openrouter
+        prompt_template:
+        - id: system-prompt-fallback-fr
+          role: system
+          text: 'Vous êtes un assistant de support client pour Sahel Capital Markets
+            (SCM). La base de connaissances n''a pas renvoyé suffisamment d''informations
+            fiables pour cette question. Vous ne devez pas deviner, déduire des faits
+            non pris en charge, ni inventer une politique SCM, un frais, une condition
+            de produit, une règle de trading ou un processus opérationnel.
+
+
+            RÈGLES :
+
+            1. Indiquez brièvement que vous n''avez pas assez d''information dans
+            la base de connaissances pour répondre précisément.
+
+            2. Suggérez le contact d''équipe le plus pertinent selon le sujet de l''utilisateur.
+
+            3. Ne fournissez pas de conseils, de prédictions ni de détails non vérifiés.
+
+            4. Gardez la réponse brève et professionnelle.
+
+            5. Terminez en demandant si l''utilisateur souhaite de l''aide sur autre
+            chose.
+
+
+            CONTACTS DE L''ÉQUIPE :
+
+            - Abena Owusu, Officière KYC : KYC, vérification, problèmes de documents
+
+            - Ama Mensah, Responsable des Relations Clients (Accra) : intégration,
+            ouverture de compte, connexion, support général du compte
+
+            - Chidi Okonkwo, Responsable des Relations Clients (Lagos) : support client
+            du marché nigérian
+
+            - Marie Kouassi, Chargée des Relations Clients (Abidjan) : support BRVM
+            et francophone
+
+            - Yaw Boateng, Responsable Trading : exécution des transactions, statut
+            des ordres, problèmes d''ordres au marché
+
+            - Fatima Diallo, Responsable Obligations : obligations, souscriptions,
+            coupons
+
+            - Dr. Nana Adjei, Responsable Recherche : informations de marché et éducation
+            sur les produits
+
+            - Tunde Bakare, Analyste Recherche Actions : support de recherche sectorielle
+
+            - Emeka Nwosu, Responsable Conformité : conformité et questions réglementaires
+
+            - Kofi Mensah, Responsable des Opérations : dépôts, retraits, règlement,
+            frais
+
+
+            Répondez dans ce format :
+
+            "Je n''ai pas assez d''informations dans notre base de connaissances pour
+            répondre précisément à votre question. Pour [sujet], je vous recommande
+            de contacter [Nom Complet], [Rôle], qui pourra vous assister directement.
+
+
+            Y a-t-il autre chose avec laquelle je peux vous aider ?"'
+        - id: user-prompt-fallback-fr
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        title: French Fallback LLM
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: fallback_llm_fr_node
+      position:
+        x: 3640
+        y: 800
+      positionAbsolute:
+        x: 3640
+        y: 800
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: 'Merci de nous avoir contactés. Je suis spécialement conçu pour aider
+          avec les services de Sahel Capital Markets (SCM), notamment :
+
+
+          • Compte & Vérification
+
+          • Dépôts, Retraits & Frais
+
+          • Achat ou Vente d''Investissements
+
+          • Portefeuille, Dividendes & Coupons
+
+          • Risque & Sécurité
+
+
+          Votre question ne semble pas liée aux services de SCM. Posez-moi une question
+          sur votre compte SCM, votre financement, votre trading, votre portefeuille
+          ou le risque d''investissement si vous souhaitez de l''aide.'
+        selected: false
+        title: French Off-Topic Response
+        type: answer
+        variables: []
+      height: 276
+      id: offtopic_answer_fr_node
+      position:
+        x: 2660
+        y: 1070
+      positionAbsolute:
+        x: 2660
+        y: 1070
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#primary_llm_fr_node.text#}}'
+        selected: false
+        title: French Answer
+        type: answer
+        variables: []
+      height: 103
+      id: answer_primary_fr_node
+      position:
+        x: 3960
+        y: 640
+      positionAbsolute:
+        x: 3960
+        y: 640
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#fallback_llm_fr_node.text#}}'
+        selected: false
+        title: French Fallback Answer
+        type: answer
+        variables: []
+      height: 103
+      id: answer_fallback_fr_node
+      position:
+        x: 3960
+        y: 800
+      positionAbsolute:
+        x: 3960
+        y: 800
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: 223.84987770365365
+      y: 157.10994813262187
+      zoom: 0.248
+  rag_pipeline_variables: []
