@@ -245,3 +245,6 @@ scripts/stress-test/reports/
 
 # Code Agent Folder
 .qoder/*
+
+# Results
+/results
