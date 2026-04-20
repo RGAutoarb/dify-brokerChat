@@ -55,6 +55,7 @@ coverage.json
 .hypothesis/
 .pytest_cache/
 scripts/stress-test/eval/eval_tests.md
+scripts/stress-test/eval/run.sh
 scripts/stress-test/results
 
 
